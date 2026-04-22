@@ -38,7 +38,7 @@ add_action( 'after_setup_theme', 'civiclick_setup' );
  */
 function civiclick_scripts() {
     wp_enqueue_style( 'civiclick-style', get_stylesheet_uri(), array(), wp_get_theme()->get('Version') );
-    wp_enqueue_script( 'civiclick-app', get_template_directory_uri() . '/app.js', array(), wp_get_theme()->get('Version'), true );
+    wp_enqueue_script( 'civiclick-app', get_template_directory_uri() . '/assets/js/app.js', array(), wp_get_theme()->get('Version'), true );
 }
 add_action( 'wp_enqueue_scripts', 'civiclick_scripts' );
 
