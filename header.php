@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 <head>
-    <meta charset="<?php bloginfo( 'charset' ); ?>">
+    <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -10,32 +10,24 @@
 </head>
 <body <?php body_class(); ?>>
 
-    <header>
-        <div class="container nav-content">
-            <div class="logo">
-                <a href="<?php echo esc_url( home_url( '/' ) ); ?>">
-                    <?php echo get_bloginfo( 'name' ); ?>
-                </a>
-            </div>
-            <nav>
-                <?php
-                wp_nav_menu( array(
-                    'theme_location' => 'primary',
-                    'menu_id'        => 'primary-menu',
-                    'container'      => false,
-                    'fallback_cb'    => false, // We'll provide a fallback if no menu exists
-                ) );
-                ?>
-                <!-- Fallback static menu for ease of use before assigning WP menu -->
-                <?php if ( ! has_nav_menu( 'primary' ) ) : ?>
-                    <ul>
-                        <li><a href="<?php echo esc_url( home_url( '/' ) ); ?>">Home</a></li>
-                        <li><a href="<?php echo esc_url( get_permalink( get_option( 'page_for_posts' ) ) ?: home_url('/blog') ); ?>">Blog</a></li>
-                        <li><a href="<?php echo esc_url( get_page_link( get_page_by_path('contact') ) ?: home_url('/contact') ); ?>">Contact</a></li>
-                    </ul>
-                <?php endif; ?>
-            </nav>
+<header id="site-header">
+    <div class="container nav-content">
+        <div class="logo">
+            <a href="<?php echo esc_url(home_url('/')); ?>"><?php bloginfo('name'); ?></a>
         </div>
-    </header>
+        <nav>
+            <?php if (has_nav_menu('primary')): ?>
+                <?php wp_nav_menu(['theme_location' => 'primary', 'menu_id' => 'primary-menu', 'container' => false, 'fallback_cb' => false]); ?>
+            <?php else: ?>
+                <ul>
+                    <li><a href="<?php echo esc_url(home_url('/')); ?>">Home</a></li>
+                    <li><a href="<?php echo esc_url(home_url('/about')); ?>">About</a></li>
+                    <li><a href="<?php echo esc_url(get_permalink(get_option('page_for_posts')) ?: home_url('/blog')); ?>">Blog</a></li>
+                    <li><a href="<?php echo esc_url(home_url('/contact')); ?>">Contact</a></li>
+                </ul>
+            <?php endif; ?>
+        </nav>
+    </div>
+</header>
 
-    <main>
+<main id="main-content">

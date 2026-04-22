@@ -1,25 +1,19 @@
 <?php
 /**
- * The template for displaying all pages
+ * Generic page template — only used as fallback for un-templated pages.
+ * About, Contact have their own page-{slug}.php templates.
  */
 get_header(); ?>
 
-<section class="page-content" style="padding: 12rem 0; min-height: 80vh;">
-    <div class="container" style="max-width: 900px;">
+<div style="padding: 9rem 0 5rem; min-height: 80vh;">
+    <div class="container" style="max-width: 860px;">
         <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
-            
-            <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-                <header class="page-header" style="margin-bottom: 4rem;">
-                    <h1 style="font-size: 4rem;"><?php the_title(); ?></h1>
-                </header>
-
-                <div class="entry-content" style="font-size: 1.15rem; color: var(--text-secondary);">
-                    <?php the_content(); ?>
-                </div>
-            </article>
-
+            <h1 style="font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 2.5rem;"><?php the_title(); ?></h1>
+            <div style="font-size: 1.1rem; line-height: 1.85; color: var(--text-secondary);">
+                <?php the_content(); ?>
+            </div>
         <?php endwhile; endif; ?>
     </div>
-</section>
+</div>
 
 <?php get_footer(); ?>
