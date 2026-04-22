@@ -30,8 +30,8 @@
                 <?php if ( ! has_nav_menu( 'primary' ) ) : ?>
                     <ul>
                         <li><a href="<?php echo esc_url( home_url( '/' ) ); ?>">Home</a></li>
-                        <li><a href="<?php echo esc_url( home_url( '/blog' ) ); ?>">Blog</a></li>
-                        <li><a href="<?php echo esc_url( home_url( '/contact' ) ); ?>">Contact</a></li>
+                        <li><a href="<?php echo esc_url( get_permalink( get_option( 'page_for_posts' ) ) ?: home_url('/blog') ); ?>">Blog</a></li>
+                        <li><a href="<?php echo esc_url( get_page_link( get_page_by_path('contact') ) ?: home_url('/contact') ); ?>">Contact</a></li>
                     </ul>
                 <?php endif; ?>
             </nav>
