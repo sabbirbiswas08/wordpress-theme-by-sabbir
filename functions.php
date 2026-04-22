@@ -14,6 +14,11 @@ if ( ! function_exists( 'civiclick_setup' ) ) :
         // Enable support for Post Thumbnails on posts and pages.
         add_theme_support( 'post-thumbnails' );
 
+        // Register Navigation Menus
+        register_nav_menus( array(
+            'primary' => esc_html__( 'Primary Menu', 'civiclick' ),
+        ) );
+
         // Switch default core markup for search form, comment form, and comments
         add_theme_support( 'html5', array(
             'search-form',
@@ -33,8 +38,50 @@ add_action( 'after_setup_theme', 'civiclick_setup' );
  */
 function civiclick_scripts() {
     wp_enqueue_style( 'civiclick-style', get_stylesheet_uri(), array(), wp_get_theme()->get('Version') );
-    
-    // Load custom script
     wp_enqueue_script( 'civiclick-app', get_template_directory_uri() . '/app.js', array(), wp_get_theme()->get('Version'), true );
 }
 add_action( 'wp_enqueue_scripts', 'civiclick_scripts' );
+
+/**
+ * Handle Native Contact Form Submission (No Plugin Required!)
+ */
+function handle_native_contact_form() {
+    // Check nonce for security
+    if ( ! isset( $_POST['native_contact_nonce'] ) || ! wp_verify_nonce( $_POST['native_contact_nonce'], 'native_contact_action' ) ) {
+        wp_die( 'Security check failed' );
+    }
+
+    // Sanitize input fields
+    $name    = sanitize_text_field( $_POST['full_name'] );
+    $email   = sanitize_email( $_POST['email_address'] );
+    $message = sanitize_textarea_field( $_POST['message_content'] );
+
+    // Get the site admin email to send the message to
+    $to = get_option( 'admin_email' );
+    $subject = 'New Contact Form Submission from ' . $name;
+    
+    $body = "Name: $name\n";
+    $body .= "Email: $email\n\n";
+    $body .= "Message:\n$message\n";
+
+    $headers = array('Content-Type: text/plain; charset=UTF-8', 'From: ' . $name . ' <' . $email . '>');
+
+    // Send email
+    $sent = wp_mail( $to, $subject, $body, $headers );
+
+    // Redirect back with a status parameter
+    $redirect_url = wp_get_referer();
+    if ( $sent ) {
+        $redirect_url = add_query_arg( 'contact', 'success', $redirect_url );
+    } else {
+        $redirect_url = add_query_arg( 'contact', 'error', $redirect_url );
+    }
+    
+    // Ensure redirect url includes anchor if needed
+    $redirect_url .= '#contact';
+
+    wp_safe_redirect( $redirect_url );
+    exit;
+}
+add_action( 'admin_post_nopriv_submit_native_contact_form', 'handle_native_contact_form' );
+add_action( 'admin_post_submit_native_contact_form', 'handle_native_contact_form' );
