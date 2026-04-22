@@ -85,3 +85,95 @@ function handle_native_contact_form() {
 }
 add_action( 'admin_post_nopriv_submit_native_contact_form', 'handle_native_contact_form' );
 add_action( 'admin_post_submit_native_contact_form', 'handle_native_contact_form' );
+
+/**
+ * Auto-create required pages on theme activation
+ */
+function civiclick_create_pages() {
+    $pages = array(
+        'home' => array(
+            'title'    => 'Home',
+            'content'  => '',
+            'template' => 'front-page.php'
+        ),
+        'blog' => array(
+            'title'    => 'Blog',
+            'content'  => '',
+            'template' => 'template-blog.php'
+        ),
+        'contact' => array(
+            'title'    => 'Contact',
+            'content'  => '',
+            'template' => 'page-contact.php'
+        ),
+    );
+
+    foreach ( $pages as $slug => $page ) {
+        $query = new WP_Query( array(
+            'pagename' => $slug,
+            'post_type' => 'page',
+        ) );
+
+        if ( ! $query->have_posts() ) {
+            $page_id = wp_insert_post( array(
+                'post_title'   => $page['title'],
+                'post_content' => $page['content'],
+                'post_status'  => 'publish',
+                'post_type'    => 'page',
+                'post_name'    => $slug
+            ) );
+
+            if ( $page_id && ! empty( $page['template'] ) ) {
+                update_post_meta( $page_id, '_wp_page_template', $page['template'] );
+            }
+            
+            // Set static front page settings
+            if ($slug === 'home') {
+                update_option('show_on_front', 'page');
+                update_option('page_on_front', $page_id);
+            }
+            if ($slug === 'blog') {
+                update_option('page_for_posts', $page_id);
+            }
+        }
+    }
+
+    // Create Sample Posts if none exist
+    $count_posts = wp_count_posts();
+    if ( $count_posts->publish == 0 ) {
+        $sample_posts = array(
+            array(
+                'title'   => 'The Future of AI in Grassroots Advocacy',
+                'content' => 'Artificial intelligence is not just a buzzword; it is a fundamental shift in how we mobilize stakeholders. By analyzing patterns in civic engagement, we can now predict which messages will resonate most with specific demographics...',
+                'excerpt' => 'Discover how AI is revolutionizing the way organizations connect with their supporters and drive legislative change.'
+            ),
+            array(
+                'title'   => 'Bridging the Gap: Citizen Intent vs Legislative Action',
+                'content' => 'One of the greatest challenges in modern democracy is the disconnect between what the public wants and what representatives hear. Our mission at CiviClick is to build the digital infrastructure that closes this gap...',
+                'excerpt' => 'Exploring the technological solutions that translate individual passion into collective political pressure.'
+            ),
+            array(
+                'title'   => 'Persuasion Architecture in the Digital Age',
+                'content' => 'Modern advocacy requires more than just high-volume messaging. It requires a deep understanding of persuasion architecture—the science of structuring digital environments to encourage civic participation...',
+                'excerpt' => 'A deep dive into the psychology and technology behind successful stakeholder mobilization campaigns.'
+            )
+        );
+
+        foreach ( $sample_posts as $post ) {
+            wp_insert_post( array(
+                'post_title'   => $post['title'],
+                'post_content' => $post['content'],
+                'post_excerpt' => $post['excerpt'],
+                'post_status'  => 'publish',
+                'post_type'    => 'post',
+            ) );
+        }
+    }
+}
+add_action( 'after_switch_theme', 'civiclick_create_pages' );
+
+// Run once if theme is already active
+if ( ! get_option( 'civiclick_pages_created' ) ) {
+    civiclick_create_pages();
+    update_option( 'civiclick_pages_created', true );
+}
