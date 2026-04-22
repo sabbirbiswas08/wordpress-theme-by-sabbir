@@ -45,7 +45,7 @@
                 <div class="bio-grid">
                     <div class="bio-image">
                         <!-- We use the provided portrait image -->
-                        <img src="chazz_portrait.webp" alt="Chazz Clevinger Portrait">
+                        <img src="https://wordpress.sabbirbiswas.com/wp-content/uploads/2026/04/chazz_portrait.webp" alt="Chazz Clevinger Portrait">
                     </div>
                     <div class="bio-content">
                         <h2>A Career Defined by Innovation and Public Service</h2>
